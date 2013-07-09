@@ -1,6 +1,28 @@
 # The Auction Sniper Example from Growing Object-Oriented Software Guided by Tests
 ## An Implementation in Ruby
 
+## Setting Up the Infrastructure
+
+You need an XMPP server running on localhost. I use *prosody*, which is simple
+to setup. After installation, you need to create three users:
+
+    sudo prosodyctl register sniper localhost sniper
+    sudo prosodyctl register auction-item-54321 localhost auction
+    sudo prosodyctl register auction-item-65432 localhost auction
+
+Then change `/etc/prosody/conf.d/localhost.cfg.lua` to look like this:
+
+    -- Section for localhost
+    daemonize = false
+    log = {
+      { to = "console" };
+    }
+    
+    -- This allows clients to connect to localhost. No harm in it.
+    VirtualHost "localhost"
+
+All infrastructure services are started through foreman, so run `foreman start`.
+
 ## Terms
 
 - *Item* is something that can be identified and bought
