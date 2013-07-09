@@ -10,6 +10,10 @@ to setup. After installation, you need to create three users:
     sudo prosodyctl register auction-item-54321 localhost auction
     sudo prosodyctl register auction-item-65432 localhost auction
 
+and should disable the system service:
+
+    sudo update-rc.d prosody disable
+
 Then change `/etc/prosody/conf.d/localhost.cfg.lua` to look like this:
 
     -- Section for localhost
