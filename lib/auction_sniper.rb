@@ -5,7 +5,6 @@ class AuctionSniper
 
   STATUS_JOINING = 'joining'
   STATUS_LOST = 'lost'
-  @@sniper_started = false
   @@status = STATUS_JOINING
 
   def self.status
@@ -17,7 +16,6 @@ class AuctionSniper
 
     when_ready do
       say "auction-#{item_id}@#{xmpp_hostname}", 'Join'
-      @@sniper_started = true
     end
 
     message do |_|
@@ -25,9 +23,5 @@ class AuctionSniper
     end
 
     run
-  end
-
-  def started?
-    @@sniper_started
   end
 end

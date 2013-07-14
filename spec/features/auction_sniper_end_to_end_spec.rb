@@ -14,9 +14,6 @@ feature 'AuctionSniper end-to-end test' do
       end
     end
     while not EM.reactor_running?; end
-    while not auction.started? and not application.started?
-      sleep 0.1
-    end
   end
 
   scenario 'Sniper joins auction until auction closes' do
