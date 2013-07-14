@@ -1,7 +1,11 @@
-require 'sinatra'
+require 'sinatra/base'
 
 class AuctionSniper::WebUI < Sinatra::Base
   get '/' do
-    AuctionSniper.status
+    sniper.status
+  end
+
+  def sniper
+    settings.sniper
   end
 end

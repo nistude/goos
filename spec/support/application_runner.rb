@@ -13,7 +13,7 @@ class ApplicationRunner
     @sniper.start(XMPP_HOSTNAME, SNIPER_ID, SNIPER_PASSWORD, auction.item_id)
   end
 
-  def started?
-    @sniper.started?
+  def stop
+    @sniper.stop
   end
 end

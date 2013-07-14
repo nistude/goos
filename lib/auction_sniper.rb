@@ -1,27 +1,37 @@
-require 'blather/client/dsl'
+require 'blather/client/client'
 
 class AuctionSniper
-  include Blather::DSL
-
   STATUS_JOINING = 'joining'
   STATUS_LOST = 'lost'
-  @@status = STATUS_JOINING
 
-  def self.status
-    @@status
+  def initialize
+    @status = STATUS_JOINING
+    WebUI.set :sniper, self
+  end
+
+  def status
+    @status
   end
 
   def start(xmpp_hostname, sniper_id, sniper_password, item_id)
-    setup("#{sniper_id}@#{xmpp_hostname}", sniper_password)
+    @client = Blather::Client.setup("#{sniper_id}@#{xmpp_hostname}",
+                                    sniper_password)
 
-    when_ready do
-      say "auction-#{item_id}@#{xmpp_hostname}", 'Join'
+    @client.register_handler(:ready) do
+      EM.next_tick do
+        @client.write Blather::Stanza::Message.new("auction-#{item_id}@#{xmpp_hostname}",
+                                                   'Join')
+      end
     end
 
-    message do |_|
-      @@status = STATUS_LOST
+    @client.register_handler(:message) do |_|
+      @status = STATUS_LOST
     end
 
-    run
+    @client.run
+  end
+
+  def stop
+    EM.next_tick { @client.close }
   end
 end

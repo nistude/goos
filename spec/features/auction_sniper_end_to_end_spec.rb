@@ -7,20 +7,24 @@ feature 'AuctionSniper end-to-end test' do
   let(:application) { ApplicationRunner.new }
 
   before(:each) do
-    Thread.new do
-      EM.run do
-        auction.start_selling_item
-        application.start_bidding_in(auction)
-      end
-    end
+    @em_thread = Thread.new { EM.run }
     while not EM.reactor_running?; end
   end
 
   scenario 'Sniper joins auction until auction closes' do
+    auction.start_selling_item
+    application.start_bidding_in(auction)
     application_shows_sniper_status(AuctionSniper::STATUS_JOINING)
     expect { auction.has_received_join_request_from_sniper? }.to become_true
     auction.announce_closed
     expect { application_shows_sniper_has_lost_auction }.to become_true
+    auction.stop
+    application.stop
+  end
+
+  after(:each) do
+    EM.stop_event_loop if EM.reactor_running?
+    @em_thread.join
   end
 
   def application_shows_sniper_status(status_text)
